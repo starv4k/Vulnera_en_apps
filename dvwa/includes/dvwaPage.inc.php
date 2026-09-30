@@ -608,24 +608,21 @@ function dvwaRedirect( $pLocation ) {
 
 // XSS Stored guestbook function --
 function dvwaGuestbook() {
+global $db;
 	$query  = "SELECT name, comment FROM guestbook";
-	$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query );
+	$result = mysqli_query($db, $query);
 
 	$guestbook = '';
+	while ($row = mysqli_fetch_assoc($result)) {
+		// Se aplica htmlspecialchars con ENT_QUOTES y UTF-8 para prevenir XSS
+		$name    = htmlspecialchars($row['name'], ENT_QUOTES, 'UTF-8');
+		$comment = htmlspecialchars($row['comment'], ENT_QUOTES, 'UTF-8');
 
-	while( $row = mysqli_fetch_row( $result ) ) {
-		if( dvwaSecurityLevelGet() == 'impossible' ) {
-			$name    = htmlspecialchars( $row[0] );
-			$comment = htmlspecialchars( $row[1] );
-		}
-		else {
-			$name    = $row[0];
-			$comment = $row[1];
-		}
-
-		$guestbook .= "<div id=\"guestbook_comments\">Name: {$name}<br />" . "Message: {$comment}<br /></div>\n";
+		$guestbook .= "<div id=\"guestbook_comments\">Name: {$name}<br />Message: {$comment}<br /></div>\n";
 	}
+
 	return $guestbook;
+}
 }
 // -- END (XSS Stored guestbook)
 

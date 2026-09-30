@@ -9,16 +9,17 @@ $page = dvwaPageNewGrab();
 $page[ 'title' ] = 'SQL Injection Session Input' . $page[ 'title_separator' ].$page[ 'title' ];
 
 if( isset( $_POST[ 'id' ] ) ) {
-	$_SESSION[ 'id' ] =  $_POST[ 'id' ];
-	//$page[ 'body' ] .= "Session ID set!<br /><br /><br />";
-	$page[ 'body' ] .= "Session ID: {$_SESSION[ 'id' ]}<br /><br /><br />";
-	$page[ 'body' ] .= "<script>window.opener.location.reload(true);</script>";
+        $_SESSION[ 'id' ] =  $_POST[ 'id' ];
+        //$page[ 'body' ] .= "Session ID set!<br /><br /><br />";
+        // CORRECCIÓN APLICADA: Sanitización con htmlspecialchars al concatenar en la respuesta HTML
+        $page[ 'body' ] .= "Session ID: " . htmlspecialchars( $_SESSION[ 'id' ], ENT_QUOTES, 'UTF-8' ) . "<br /><br /><br />";
+        $page[ 'body' ] .= "<script>window.opener.location.reload(true);</script>";
 }
 
 $page[ 'body' ] .= "
 <form action=\"#\" method=\"POST\">
-	<input type=\"text\" size=\"15\" name=\"id\">
-	<input type=\"submit\" name=\"Submit\" value=\"Submit\">
+        <input type=\"text\" size=\"15\" name=\"id\">
+        <input type=\"submit\" name=\"Submit\" value=\"Submit\">
 </form>
 <hr />
 <br />
@@ -28,5 +29,3 @@ $page[ 'body' ] .= "
 dvwaSourceHtmlEcho( $page );
 
 ?>
-
-
